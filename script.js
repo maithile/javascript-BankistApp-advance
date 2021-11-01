@@ -43,25 +43,84 @@ btnScroll.addEventListener('click', function () {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-//// * nav link *////
-// lay all the nav_link
-const navLink = document.querySelectorAll('.nav__link');
-// tao function chan prevent(), kich moi link a
-navLink.forEach(function (e) {
-  e.addEventListener('click', function (el) {
-    el.preventDefault();
-    // lay id ra kie gi nhi
-    const id = this.getAttribute('href');
+// //// * nav link *////
+// const navLink = document.querySelectorAll('.nav__link');
+// // tao function chan prevent(), kich moi link a
+// navLink.forEach(function (e) {
+//   e.addEventListener('click', function (el) {
+//     el.preventDefault();
+//     // console.log(this);
+//     console.log(el.target);
+
+//     // lay id ra kie gi nhi
+//     const id = this.getAttribute('href');
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// });
+
+//////*event elegnent*////
+
+// gan su kien cho thang cha
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault();
+  console.log(e.target);
+  // tim thang con matching vs cha
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-  });
+  }
 });
+////////////////////////  Tabbed Building very good///////////////////
 
-// lay section 1/2/3/4
+// lay tab, parrent tab, content-tab
+const tabs = document.querySelectorAll('.operations__tab');
+const tabContainer = document.querySelector('.operations__tab-container');
+const tabContent = document.querySelectorAll('.operations__content');
+// chay thu forEach
+// tabs.forEach(tab =>
+//   tab.addEventListener('click', function () {
+//     console.log('moi ngay mot chut');
+//   })
+// );
 
-// smooth
+// even delegian
+
+// 1. gan cho cha
+tabContainer.addEventListener('click', function (e) {
+  // 2. matching thang con voi cha
+
+  const clicked = e.target.parentElement;
+  console.log(clicked);
+});
 
 ////////////////////////  practice /////////////////////
 
+// const h1 = document.querySelector('h1');
+
+// console.log(h1.querySelectorAll('.highlight')); // deep hon na van ok
+// console.log(h1.childNodes); //
+// console.log(h1.children);
+
+// h1.firstElementChild.style.color = 'black'; // phan tu dau tien
+// h1.lastElementChild.style.color = 'white'; // phan tu dau tien
+
+// go up
+// console.log(h1.parentNode);
+// console.log(h1.parentElement);
+
+// h1.closest('.header').style.background = ''; // chayj tu duoi len tim duoc phan tu phu hop voi phan tu trong secltor thi thoi / doi dien queryselectoerALL
+// h1.closest('h1').style.background = 'orangered'; // chayj tu duoi len tim duoc phan tu phu hop voi phan tu trong secltor thi thoi / doi dien queryselectoerALL
+
+// console.log(h1.previousSibling);
+// console.log(h1.parentElement.children);
+// [...h1.parentElement.children].forEach(function (e) {
+//   if (e !== h1) e.style.transform = 'scale(0.5)';
+// });
+////////// DOM traversing ////////////
+
+// sibling
+// console.log(h1.previousElementSibling);
+// console.log(h1.nextElementSibling);
 // seclect element
 // console.log(document.documentElement);
 // console.log(document.head);
