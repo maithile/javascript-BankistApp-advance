@@ -7,6 +7,12 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const nav = document.querySelector('.nav');
+const btnScroll = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+const tabContainer = document.querySelector('.operations__tab-container');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabContents = document.querySelectorAll('.operations__content');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -26,19 +32,13 @@ btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 //   btnsOpenModal[i].addEventListener('click', openModal);
 btnCloseModal.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
-
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
     closeModal();
   }
 });
 
-//////////////////////// smooth behavior /////////////////////
-
-//// * button *////
-const btnScroll = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
-console.log(section1);
+//////////////////////// smooth behavior /////////////
 btnScroll.addEventListener('click', function () {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
@@ -58,9 +58,9 @@ btnScroll.addEventListener('click', function () {
 //   });
 // });
 
-//////*event elegnent*////
-
+///////////////*event elegnent*////////////////
 // gan su kien cho thang cha
+// matching voi thang con
 document.querySelector('.nav__links').addEventListener('click', function (e) {
   e.preventDefault();
   console.log(e.target);
@@ -70,28 +70,46 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
-////////////////////////  Tabbed Building very good///////////////////
-
-// lay tab, parrent tab, content-tab
-const tabs = document.querySelectorAll('.operations__tab');
-const tabContainer = document.querySelector('.operations__tab-container');
-const tabContent = document.querySelectorAll('.operations__content');
-// chay thu forEach
-// tabs.forEach(tab =>
-//   tab.addEventListener('click', function () {
-//     console.log('moi ngay mot chut');
-//   })
-// );
-
-// even delegian
-
+////////////////////////  Tabbed Building ////////////
 // 1. gan cho cha
+// 2. matching thang con voi cha
 tabContainer.addEventListener('click', function (e) {
-  // 2. matching thang con voi cha
-
-  const clicked = e.target.parentElement;
+  const clicked = e.target.closest('.operations__tab'); // true
   console.log(clicked);
+
+  // active tab
+  if (!clicked) return;
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  clicked.classList.add('operations__tab--active');
+
+  // active content
+  tabContents.forEach(c => c.classList.remove('operations__content--active'));
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
 });
+////////////////////////  hover  /////////////////////
+
+// tao function
+
+const handleHover = function (e, opacity) {
+  if (e.target.classList.contains('nav__link')) {
+    const moused = e.target;
+    // chon  het link con lai bang cach move den cha r chon tu tren xuong
+    const siblings = moused.closest('.nav').querySelectorAll('.nav__link');
+    // lay logo nua
+    const logo = moused.closest('.nav').querySelector('img');
+    siblings.forEach(el => {
+      if (el !== moused) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+const newHandle = handleHover.bind(0.5); // return new function with  this // set new this
+nav.addEventListener('mouseover', newHandle);
+
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 ////////////////////////  practice /////////////////////
 
