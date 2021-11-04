@@ -4,6 +4,7 @@
 // Modal window
 
 const modal = document.querySelector('.modal');
+const allSection = document.querySelectorAll('.section');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
@@ -111,6 +112,7 @@ nav.addEventListener('mouseout', handleHover.bind(1));
 const navHeight = nav.getBoundingClientRect().height;
 const navCallback = function (entries) {
   const [entry] = entries;
+  console.log(entry.target);
   if (!entry.isIntersecting) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
 };
@@ -124,7 +126,6 @@ obHeader.observe(header);
 ////////////////////////  Move up animation Intersection   ////////
 const revealSection = function (entries, observe) {
   const [entry] = entries;
-
   if (!entry.isIntersecting) return;
   entry.target.classList.remove('section--hidden');
   console.log(entry);
@@ -132,7 +133,7 @@ const revealSection = function (entries, observe) {
 };
 
 // create object observe for section
-const allSection = document.querySelectorAll('.section');
+
 const obSection = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.2,
