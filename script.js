@@ -10,6 +10,7 @@ const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const nav = document.querySelector('.nav');
 const btnScroll = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const header = document.querySelector('.header');
 const tabContainer = document.querySelector('.operations__tab-container');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabContents = document.querySelectorAll('.operations__content');
@@ -89,9 +90,6 @@ tabContainer.addEventListener('click', function (e) {
     .classList.add('operations__content--active');
 });
 ////////////////////////  hover  /////////////////////
-
-// tao function
-
 const handleHover = function (e, opacity) {
   if (e.target.classList.contains('nav__link')) {
     const moused = e.target;
@@ -105,13 +103,68 @@ const handleHover = function (e, opacity) {
     logo.style.opacity = this;
   }
 };
-
-const newHandle = handleHover.bind(0.5); // return new function with  this // set new this
+const newHandle = handleHover.bind(0.5); // return new function
 nav.addEventListener('mouseover', newHandle);
-
 nav.addEventListener('mouseout', handleHover.bind(1));
 
+////////////////////////  sticky Intersection   /////////////////////
+const navHeight = nav.getBoundingClientRect().height;
+const navCallback = function (entries) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+const obHeader = new IntersectionObserver(navCallback, {
+  root: null, // default portview
+  threshold: 0, // header reach 0% so voi viewport thi call callback
+  rootMargin: `-${navHeight}px`,
+});
+obHeader.observe(header);
+
+////////////////////////  Move up animation Intersection   ////////
+const revealSection = function (entries, observe) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+  entry.target.classList.remove('section--hidden');
+  console.log(entry);
+  observe.unobserve(entry.target);
+};
+
+// create object observe for section
+const allSection = document.querySelectorAll('.section');
+const obSection = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.2,
+});
+
+// quan sat
+allSection.forEach(section => {
+  obSection.observe(section);
+  section.classList.add('section--hidden');
+});
+
+// cach cũ
+// const getHeight = section1.getBoundingClientRect().top;
+// window.addEventListener('scroll', function () {
+//   if (window.pageYOffset >= getHeight) nav.classList.add('sticky');
+//   else nav.classList.remove('sticky');
+// });
 ////////////////////////  practice /////////////////////
+// IntersectionObserver có thể được sử dụng để theo dõi xem một phần tử đã đi vào vùng hiển thị của thiết bị hay không mà không cần phải tính toán thường xuyên và phức tạp để đưa ra quyết định này.
+
+////////////  IntersectionObserver /////////////////////
+// tao callback and option
+// const abCallback = function (entries, observe) {
+//   entries.forEach(en => console.log(en));
+// };
+// const abOption = {
+//   root: null, // default viewport
+//   threshold: [0, 0.2],
+// };
+// // tao doi tuong can quan sat
+// const observer = new IntersectionObserver(abCallback, abOption);
+// observer.observe(section1);
 
 // const h1 = document.querySelector('h1');
 
