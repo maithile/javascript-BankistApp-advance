@@ -15,6 +15,7 @@ const header = document.querySelector('.header');
 const tabContainer = document.querySelector('.operations__tab-container');
 const tabs = document.querySelectorAll('.operations__tab');
 const tabContents = document.querySelectorAll('.operations__content');
+const dotContainer = document.querySelector('.dots');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -108,11 +109,11 @@ const newHandle = handleHover.bind(0.5); // return new function
 nav.addEventListener('mouseover', newHandle);
 nav.addEventListener('mouseout', handleHover.bind(1));
 
-////////////////////////  sticky Intersection   /////////////////////
+////////////////////////  sticky Intersection   //////////////
 const navHeight = nav.getBoundingClientRect().height;
 const navCallback = function (entries) {
   const [entry] = entries;
-  console.log(entry.target);
+  // console.log(entry.target);
   if (!entry.isIntersecting) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
 };
@@ -125,33 +126,136 @@ obHeader.observe(header);
 
 ////////////////////////  Move up animation Intersection   ////////
 const revealSection = function (entries, observe) {
-  const [entry] = entries;
-  if (!entry.isIntersecting) return;
-  entry.target.classList.remove('section--hidden');
-  console.log(entry);
-  observe.unobserve(entry.target);
+  // const [entry] = entries; // jonasn ways
+  entries.forEach(entry => {
+    // if (!entry.isIntersecting) return; // jonas
+    if (entry.isIntersecting) {
+      entry.target.classList.remove('section--hidden');
+      observe.unobserve(entry.target);
+    }
+  });
 };
 
 // create object observe for section
-
 const obSection = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.2,
 });
-
 // quan sat
 allSection.forEach(section => {
   obSection.observe(section);
-  section.classList.add('section--hidden');
+  // section.classList.add('section--hidden');
 });
 
-// cach cũ
-// const getHeight = section1.getBoundingClientRect().top;
-// window.addEventListener('scroll', function () {
-//   if (window.pageYOffset >= getHeight) nav.classList.add('sticky');
-//   else nav.classList.remove('sticky');
+////////////////////////Layzy Load Img  /////////////////////
+const imgTargets = document.querySelectorAll('img[data-src]');
+const loadImg = function (entries, observe) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      //replace src with data-src
+      entry.target.src = entry.target.dataset.src;
+      entry.target.addEventListener('load', function () {
+        entry.target.classList.remove('lazy-img');
+      });
+      observe.unobserve(entry.target);
+    }
+  });
+};
+const imgObserve = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '400px', // cach 400px laf nos d xay ra truoc khi reach target
+});
+// observetarget
+imgTargets.forEach(img => imgObserve.observe(img));
+
+//////////////////////// slider ///////////////////
+const imgSlide = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+let currSlide = 0;
+const maxSlide = imgSlide.length - 1; // 4
+
+const slider = function () {
+  // function
+  const moveSlide = function (slide) {
+    imgSlide.forEach((s, i) => {
+      s.style.transform = `translateX(${100 * (i - slide)}%)`;
+    });
+  };
+  moveSlide(0);
+  // next slide
+  const nextSlide = function () {
+    if (currSlide === maxSlide) {
+      currSlide = 0;
+    } else {
+      currSlide++;
+    }
+    moveSlide(currSlide);
+    activeDote(currSlide);
+  };
+
+  // prev slide
+  const prevSlide = function () {
+    if (currSlide === 0) {
+      currSlide = maxSlide; // 3
+    } else {
+      currSlide--;
+    }
+    moveSlide(currSlide);
+    activeDote(currSlide);
+  };
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+  /////////// use arrow to move /////////
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+  //////////// Create Dot ////////////
+  const createDots = function () {
+    imgSlide.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+  createDots();
+  //////////// active dot ////////////
+  const activeDote = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+  activeDote(0);
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains(`dots__dot`)) {
+      const slideNum = Number(e.target.dataset.slide);
+      moveSlide(slideNum);
+      activeDote(slideNum);
+    }
+  });
+};
+slider();
+////////////////////////  Lifeccle DOM Event /////////////////
+
+// document.addEventListener('DOMContentLoaded', function (e) {
+//   console.log('HtmL parsed and DOm tree buil');
 // });
+
+// window.addEventListener('load', function (e) {
+//   console.log('page full load', e);
+// });
+window.addEventListener('beforeunload', function (event) {
+  e.preventDefault();
+  event.returnValue = 'Write something clever here..';
+});
 ////////////////////////  practice /////////////////////
+
 // IntersectionObserver có thể được sử dụng để theo dõi xem một phần tử đã đi vào vùng hiển thị của thiết bị hay không mà không cần phải tính toán thường xuyên và phức tạp để đưa ra quyết định này.
 
 ////////////  IntersectionObserver /////////////////////
